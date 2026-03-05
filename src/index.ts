@@ -1,5 +1,5 @@
 // Main client
-export { LexwareClient, type LexwareClientConfig } from './client.js';
+export { LexwareClient, type LexwareClientConfig, type ConnectionStatus } from './client.js';
 
 // Result types
 export {

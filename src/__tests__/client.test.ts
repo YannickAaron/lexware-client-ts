@@ -46,4 +46,52 @@ describe('LexwareClient', () => {
 
     expect(invoices1).toBe(invoices2);
   });
+
+  describe('verifyApiKey', () => {
+    it('returns success with org info for valid key', async () => {
+      const mock = createMockFetch({
+        status: 200,
+        body: {
+          organizationId: 'org-123',
+          companyName: 'Acme GmbH',
+          taxType: 'net',
+          smallBusiness: false,
+        },
+      });
+      const client = new LexwareClient({
+        apiKey: 'valid-key',
+        fetch: mock.fetch,
+        rateLimitPerSecond: 100,
+        maxRetries: 0,
+      });
+
+      const status = await client.verifyApiKey();
+
+      expect(status.success).toBe(true);
+      if (status.success) {
+        expect(status.organizationId).toBe('org-123');
+        expect(status.companyName).toBe('Acme GmbH');
+      }
+    });
+
+    it('returns failure for invalid key', async () => {
+      const mock = createMockFetch({
+        status: 401,
+        body: { message: 'Unauthorized' },
+      });
+      const client = new LexwareClient({
+        apiKey: 'bad-key',
+        fetch: mock.fetch,
+        rateLimitPerSecond: 100,
+        maxRetries: 0,
+      });
+
+      const status = await client.verifyApiKey();
+
+      expect(status.success).toBe(false);
+      if (!status.success) {
+        expect(status.error).toBeDefined();
+      }
+    });
+  });
 });

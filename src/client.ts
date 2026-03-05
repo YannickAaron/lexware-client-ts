@@ -20,6 +20,19 @@ import { QuotationsResource } from './resources/quotations.js';
 import { RecurringTemplatesResource } from './resources/recurring-templates.js';
 import { VoucherlistResource } from './resources/voucherlist.js';
 import { VouchersResource } from './resources/vouchers.js';
+import type { LexwareResult } from './types/result.js';
+
+/** Result of verifying the API key connection. */
+export type ConnectionStatus =
+  | {
+      success: true;
+      organizationId: string;
+      companyName: string;
+    }
+  | {
+      success: false;
+      error: string;
+    };
 
 /** Configuration for the Lexware API client. */
 export type LexwareClientConfig = {
@@ -66,6 +79,36 @@ export class LexwareClient {
       timeout: config.timeout ?? 30_000,
       fetch: config.fetch,
     });
+  }
+
+  /**
+   * Verify that the API key is valid by making a lightweight request to the profile endpoint.
+   * Returns the organization ID and company name on success, or an error message on failure.
+   *
+   * @example
+   * ```typescript
+   * const status = await client.verifyApiKey();
+   * if (status.success) {
+   *   console.log(`Connected to ${status.companyName} (${status.organizationId})`);
+   * } else {
+   *   console.error('Invalid API key:', status.error);
+   * }
+   * ```
+   */
+  async verifyApiKey(): Promise<ConnectionStatus> {
+    const result: LexwareResult<{ organizationId: string; companyName: string }> =
+      await this.profile.get();
+    if (result.success) {
+      return {
+        success: true,
+        organizationId: result.data.organizationId,
+        companyName: result.data.companyName,
+      };
+    }
+    return {
+      success: false,
+      error: result.error.message,
+    };
   }
 
   /** Articles resource for managing products and services. */
