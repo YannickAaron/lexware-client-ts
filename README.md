@@ -244,29 +244,795 @@ const result = await client.composites.getRevenueByContact('contact-id', {
 
 ## Available Resources
 
-| Namespace | Methods |
-|---|---|
-| `client.articles` | create, get, update, delete, list, listAll |
-| `client.contacts` | create, get, update, list, listAll |
-| `client.invoices` | create, get, list, listAll, renderDocument, downloadFile |
-| `client.creditNotes` | create, get, list, listAll, renderDocument, downloadFile |
-| `client.deliveryNotes` | create, get, list, listAll, renderDocument, downloadFile |
-| `client.quotations` | create, get, list, listAll, renderDocument, downloadFile |
-| `client.orderConfirmations` | create, get, list, listAll, renderDocument, downloadFile |
-| `client.dunnings` | create, get, list, listAll, renderDocument, downloadFile |
-| `client.downPaymentInvoices` | get, list, listAll, downloadFile |
-| `client.vouchers` | create, get, update, list, listAll, uploadFile |
-| `client.voucherlist` | list, listAll |
-| `client.recurringTemplates` | get, list, listAll |
-| `client.payments` | get |
-| `client.countries` | list |
-| `client.paymentConditions` | list |
-| `client.postingCategories` | list |
-| `client.printLayouts` | list |
-| `client.profile` | get |
-| `client.files` | upload, download |
-| `client.eventSubscriptions` | create, get, list, delete |
-| `client.composites` | createAndFinalizeInvoice, getInvoiceWithContact, getContactWithInvoices, getOutstandingInvoices, createInvoiceFromArticles, getRevenueByContact |
+### `client.invoices` — Sales Invoices
+
+Create, retrieve, and manage sales invoices. Supports draft and finalized states, PDF rendering, and XRechnung (German e-invoicing standard).
+
+| Method | Signature | Description |
+|---|---|---|
+| `create` | `(invoice: InvoiceCreateParams, options?: { finalize?: boolean }) => LexwareResult<ResourceResponse>` | Create a new invoice. Pass `{ finalize: true }` to finalize immediately. |
+| `get` | `(id: string) => LexwareResult<Invoice>` | Retrieve a single invoice by ID. |
+| `list` | `(filter?: InvoiceListFilter) => LexwareResult<Page<Invoice>>` | List invoices with optional filters. |
+| `listAll` | `(filter?) => AsyncGenerator<Invoice>` | Auto-paginating iterator over all invoices. |
+| `renderDocument` | `(id: string) => LexwareResult<DocumentFileId>` | Trigger PDF rendering for a finalized invoice. Returns `documentFileId`. |
+| `downloadFile` | `(id: string) => LexwareResult<Blob>` | Download the rendered PDF as a Blob. |
+
+<details>
+<summary>InvoiceCreateParams</summary>
+
+```typescript
+{
+  voucherDate: string;                    // ISO date
+  address: Address;                       // { contactId?, name?, street?, city?, zip?, countryCode? }
+  lineItems: (LineItem | TextLineItem)[]; // Line items (custom, material, service, or text)
+  totalPrice: { currency: 'EUR' };
+  taxConditions: TaxConditions;           // { taxType: 'net' | 'gross' | 'vatfree' | ... }
+  shippingConditions: ShippingConditions; // { shippingType, shippingDate?, shippingEndDate? }
+  language?: string;
+  xRechnung?: XRechnungInfo;             // { buyerReference, vendorNumberAtCustomer? }
+  paymentConditions?: PaymentConditions;
+  title?: string;
+  introduction?: string;
+  remark?: string;
+}
+```
+</details>
+
+<details>
+<summary>InvoiceListFilter</summary>
+
+```typescript
+{ voucherStatus?: VoucherStatus; archived?: boolean; page?: number; size?: number; sort?: string }
+```
+</details>
+
+<details>
+<summary>Invoice (response)</summary>
+
+```typescript
+{
+  id: string;
+  organizationId: string;
+  version: number;
+  voucherStatus: VoucherStatus;  // 'draft' | 'open' | 'paid' | 'voided' | 'overdue' | ...
+  voucherNumber: string;
+  voucherDate: string;
+  dueDate?: string;
+  address: Address;
+  lineItems: (LineItem | TextLineItem)[];
+  totalPrice: TotalPrice;       // { currency, totalNetAmount, totalGrossAmount, totalTaxAmount }
+  taxAmounts?: TaxAmount[];
+  taxConditions: TaxConditions;
+  paymentConditions?: PaymentConditions;
+  shippingConditions?: ShippingConditions;
+  xRechnung?: XRechnungInfo;
+  closingInvoice?: boolean;
+  downPaymentDeductions?: DownPaymentDeduction[];
+  recurringTemplateId?: string;
+  title?: string;
+  introduction?: string;
+  remark?: string;
+  files?: VoucherFile;
+  // ... timestamps, language, archived
+}
+```
+</details>
+
+---
+
+### `client.contacts` — Contacts (Customers & Vendors)
+
+Manage business contacts including customers and vendors. Contacts can have companies, persons, multiple addresses, email addresses, and phone numbers.
+
+| Method | Signature | Description |
+|---|---|---|
+| `create` | `(contact: ContactCreateParams) => LexwareResult<ResourceResponse>` | Create a new contact. |
+| `get` | `(id: string) => LexwareResult<Contact>` | Retrieve a single contact by ID. |
+| `update` | `(id: string, contact: ContactCreateParams) => LexwareResult<ResourceResponse>` | Update an existing contact (full replace). |
+| `list` | `(filter?: ContactListFilter) => LexwareResult<Page<Contact>>` | List contacts with optional filters. |
+| `listAll` | `(filter?) => AsyncGenerator<Contact>` | Auto-paginating iterator over all contacts. |
+
+<details>
+<summary>ContactCreateParams</summary>
+
+```typescript
+{
+  version: number;
+  roles: { customer?: { number?: number }; vendor?: { number?: number } };
+  company?: {
+    name: string;
+    taxNumber?: string;
+    vatRegistrationId?: string;
+    allowTaxFreeInvoices?: boolean;
+    contactPersons?: { salutation?: string; firstName?: string; lastName: string }[];
+  };
+  person?: { salutation?: string; firstName?: string; lastName: string };
+  addresses?: {
+    billing?: Address[];
+    shipping?: Address[];
+  };
+  xRechnung?: { buyerReference?: string; vendorNumberAtCustomer?: string };
+  emailAddresses?: { business?: string[]; office?: string[]; private?: string[]; other?: string[] };
+  phoneNumbers?: { business?: string[]; office?: string[]; mobile?: string[]; private?: string[]; fax?: string[]; other?: string[] };
+  note?: string;
+}
+```
+</details>
+
+<details>
+<summary>ContactListFilter</summary>
+
+```typescript
+{ email?: string; name?: string; number?: number; customer?: boolean; vendor?: boolean; page?: number; size?: number }
+```
+</details>
+
+---
+
+### `client.articles` — Articles (Products & Services)
+
+Manage your product and service catalog. Articles can be referenced when creating invoices.
+
+| Method | Signature | Description |
+|---|---|---|
+| `create` | `(article: ArticleCreateParams) => LexwareResult<ResourceResponse>` | Create a new article. |
+| `get` | `(id: string) => LexwareResult<Article>` | Retrieve a single article by ID. |
+| `update` | `(id: string, article: ArticleCreateParams) => LexwareResult<ResourceResponse>` | Update an existing article (full replace). |
+| `delete` | `(id: string) => LexwareResult<void>` | Delete an article. |
+| `list` | `(filter?: ArticleListFilter) => LexwareResult<Page<Article>>` | List articles with optional filters. |
+| `listAll` | `(filter?) => AsyncGenerator<Article>` | Auto-paginating iterator over all articles. |
+
+<details>
+<summary>ArticleCreateParams</summary>
+
+```typescript
+{
+  title: string;
+  type: 'PRODUCT' | 'SERVICE';
+  price: {
+    netPrice: number;
+    grossPrice: number;
+    leadingPrice: 'net' | 'gross';
+    taxRate: number;
+    currency: 'EUR';
+  };
+  unitName?: string;
+  description?: string;
+  articleNumber?: string;
+  gtin?: string;
+  note?: string;
+}
+```
+</details>
+
+<details>
+<summary>ArticleListFilter</summary>
+
+```typescript
+{ articleNumber?: string; gtin?: string; type?: 'PRODUCT' | 'SERVICE'; page?: number; size?: number }
+```
+</details>
+
+---
+
+### `client.creditNotes` — Credit Notes
+
+Create and manage credit notes. Supports draft and finalized states with PDF rendering.
+
+| Method | Signature | Description |
+|---|---|---|
+| `create` | `(creditNote: CreditNoteCreateParams, options?: { finalize?: boolean }) => LexwareResult<ResourceResponse>` | Create a new credit note. |
+| `get` | `(id: string) => LexwareResult<CreditNote>` | Retrieve a single credit note by ID. |
+| `list` | `(filter?: CreditNoteListFilter) => LexwareResult<Page<CreditNote>>` | List credit notes with optional filters. |
+| `listAll` | `(filter?) => AsyncGenerator<CreditNote>` | Auto-paginating iterator over all credit notes. |
+| `renderDocument` | `(id: string) => LexwareResult<DocumentFileId>` | Trigger PDF rendering. Returns `documentFileId`. |
+| `downloadFile` | `(id: string) => LexwareResult<Blob>` | Download the rendered PDF as a Blob. |
+
+<details>
+<summary>CreditNoteCreateParams</summary>
+
+```typescript
+{
+  voucherDate: string;
+  address: Address;
+  lineItems: (LineItem | TextLineItem)[];
+  totalPrice: { currency: 'EUR' };
+  taxConditions: TaxConditions;
+  shippingConditions?: ShippingConditions;
+  language?: string;
+  title?: string;
+  introduction?: string;
+  remark?: string;
+}
+```
+</details>
+
+<details>
+<summary>CreditNoteListFilter</summary>
+
+```typescript
+{ voucherStatus?: VoucherStatus; archived?: boolean; page?: number; size?: number }
+```
+</details>
+
+---
+
+### `client.quotations` — Quotations / Offers
+
+Create and manage quotations (Angebote). Supports expiration dates and PDF rendering.
+
+| Method | Signature | Description |
+|---|---|---|
+| `create` | `(quotation: QuotationCreateParams, options?: { finalize?: boolean }) => LexwareResult<ResourceResponse>` | Create a new quotation. |
+| `get` | `(id: string) => LexwareResult<Quotation>` | Retrieve a single quotation by ID. |
+| `list` | `(filter?: QuotationListFilter) => LexwareResult<Page<Quotation>>` | List quotations with optional filters. |
+| `listAll` | `(filter?) => AsyncGenerator<Quotation>` | Auto-paginating iterator over all quotations. |
+| `renderDocument` | `(id: string) => LexwareResult<DocumentFileId>` | Trigger PDF rendering. Returns `documentFileId`. |
+| `downloadFile` | `(id: string) => LexwareResult<Blob>` | Download the rendered PDF as a Blob. |
+
+<details>
+<summary>QuotationCreateParams</summary>
+
+```typescript
+{
+  voucherDate: string;
+  expirationDate?: string;
+  address: Address;
+  lineItems: (LineItem | TextLineItem)[];
+  totalPrice: { currency: 'EUR' };
+  taxConditions: TaxConditions;
+  shippingConditions?: ShippingConditions;
+  paymentConditions?: PaymentConditions;
+  xRechnung?: XRechnungInfo;
+  language?: string;
+  title?: string;
+  introduction?: string;
+  remark?: string;
+}
+```
+</details>
+
+<details>
+<summary>QuotationListFilter</summary>
+
+```typescript
+{ voucherStatus?: VoucherStatus; archived?: boolean; page?: number; size?: number }
+```
+</details>
+
+---
+
+### `client.orderConfirmations` — Order Confirmations
+
+Create and manage order confirmations (Auftragsbestaetigungen). Supports PDF rendering.
+
+| Method | Signature | Description |
+|---|---|---|
+| `create` | `(orderConfirmation: OrderConfirmationCreateParams, options?: { finalize?: boolean }) => LexwareResult<ResourceResponse>` | Create a new order confirmation. |
+| `get` | `(id: string) => LexwareResult<OrderConfirmation>` | Retrieve a single order confirmation by ID. |
+| `list` | `(filter?: OrderConfirmationListFilter) => LexwareResult<Page<OrderConfirmation>>` | List order confirmations with optional filters. |
+| `listAll` | `(filter?) => AsyncGenerator<OrderConfirmation>` | Auto-paginating iterator over all order confirmations. |
+| `renderDocument` | `(id: string) => LexwareResult<DocumentFileId>` | Trigger PDF rendering. Returns `documentFileId`. |
+| `downloadFile` | `(id: string) => LexwareResult<Blob>` | Download the rendered PDF as a Blob. |
+
+<details>
+<summary>OrderConfirmationCreateParams</summary>
+
+```typescript
+{
+  voucherDate: string;
+  address: Address;
+  lineItems: (LineItem | TextLineItem)[];
+  totalPrice: { currency: 'EUR' };
+  taxConditions: TaxConditions;
+  shippingConditions?: ShippingConditions;
+  paymentConditions?: PaymentConditions;
+  language?: string;
+  title?: string;
+  introduction?: string;
+  remark?: string;
+}
+```
+</details>
+
+<details>
+<summary>OrderConfirmationListFilter</summary>
+
+```typescript
+{ voucherStatus?: VoucherStatus; archived?: boolean; page?: number; size?: number }
+```
+</details>
+
+---
+
+### `client.deliveryNotes` — Delivery Notes
+
+Create and manage delivery notes (Lieferscheine). Supports PDF rendering.
+
+| Method | Signature | Description |
+|---|---|---|
+| `create` | `(deliveryNote: DeliveryNoteCreateParams, options?: { finalize?: boolean }) => LexwareResult<ResourceResponse>` | Create a new delivery note. |
+| `get` | `(id: string) => LexwareResult<DeliveryNote>` | Retrieve a single delivery note by ID. |
+| `list` | `(filter?: DeliveryNoteListFilter) => LexwareResult<Page<DeliveryNote>>` | List delivery notes with optional filters. |
+| `listAll` | `(filter?) => AsyncGenerator<DeliveryNote>` | Auto-paginating iterator over all delivery notes. |
+| `renderDocument` | `(id: string) => LexwareResult<DocumentFileId>` | Trigger PDF rendering. Returns `documentFileId`. |
+| `downloadFile` | `(id: string) => LexwareResult<Blob>` | Download the rendered PDF as a Blob. |
+
+<details>
+<summary>DeliveryNoteCreateParams</summary>
+
+```typescript
+{
+  voucherDate: string;
+  address: Address;
+  lineItems: (LineItem | TextLineItem)[];
+  totalPrice: { currency: 'EUR' };
+  taxConditions: TaxConditions;
+  shippingConditions?: ShippingConditions;
+  language?: string;
+  title?: string;
+  introduction?: string;
+  remark?: string;
+}
+```
+</details>
+
+<details>
+<summary>DeliveryNoteListFilter</summary>
+
+```typescript
+{ voucherStatus?: VoucherStatus; archived?: boolean; page?: number; size?: number }
+```
+</details>
+
+---
+
+### `client.dunnings` — Payment Reminders
+
+Create and manage dunning letters / payment reminders (Mahnungen). Supports PDF rendering.
+
+| Method | Signature | Description |
+|---|---|---|
+| `create` | `(dunning: DunningCreateParams, options?: { finalize?: boolean }) => LexwareResult<ResourceResponse>` | Create a new dunning. |
+| `get` | `(id: string) => LexwareResult<Dunning>` | Retrieve a single dunning by ID. |
+| `list` | `(filter?: DunningListFilter) => LexwareResult<Page<Dunning>>` | List dunnings with optional filters. |
+| `listAll` | `(filter?) => AsyncGenerator<Dunning>` | Auto-paginating iterator over all dunnings. |
+| `renderDocument` | `(id: string) => LexwareResult<DocumentFileId>` | Trigger PDF rendering. Returns `documentFileId`. |
+| `downloadFile` | `(id: string) => LexwareResult<Blob>` | Download the rendered PDF as a Blob. |
+
+<details>
+<summary>DunningCreateParams</summary>
+
+```typescript
+{
+  voucherDate: string;
+  address: Address;
+  lineItems: (LineItem | TextLineItem)[];
+  totalPrice: { currency: 'EUR' };
+  taxConditions: TaxConditions;
+  shippingConditions?: ShippingConditions;
+  language?: string;
+  title?: string;
+  introduction?: string;
+  remark?: string;
+}
+```
+</details>
+
+<details>
+<summary>DunningListFilter</summary>
+
+```typescript
+{ voucherStatus?: VoucherStatus; archived?: boolean; page?: number; size?: number }
+```
+</details>
+
+---
+
+### `client.downPaymentInvoices` — Down Payment Invoices
+
+Retrieve and list down payment invoices (Abschlagsrechnungen). These are read-only — created through the Lexware UI.
+
+| Method | Signature | Description |
+|---|---|---|
+| `get` | `(id: string) => LexwareResult<DownPaymentInvoice>` | Retrieve a single down payment invoice by ID. |
+| `list` | `(filter?: DownPaymentInvoiceListFilter) => LexwareResult<Page<DownPaymentInvoice>>` | List down payment invoices. |
+| `listAll` | `(filter?) => AsyncGenerator<DownPaymentInvoice>` | Auto-paginating iterator over all down payment invoices. |
+| `downloadFile` | `(id: string) => LexwareResult<Blob>` | Download the rendered PDF as a Blob. |
+
+<details>
+<summary>DownPaymentInvoiceListFilter</summary>
+
+```typescript
+{ voucherStatus?: VoucherStatus; archived?: boolean; page?: number; size?: number }
+```
+</details>
+
+---
+
+### `client.vouchers` — Bookkeeping Vouchers
+
+Create and manage bookkeeping vouchers for purchases and sales. Supports file attachments for receipts.
+
+| Method | Signature | Description |
+|---|---|---|
+| `create` | `(voucher: VoucherCreateParams) => LexwareResult<ResourceResponse>` | Create a new voucher. |
+| `get` | `(id: string) => LexwareResult<Voucher>` | Retrieve a single voucher by ID. |
+| `update` | `(id: string, voucher: VoucherCreateParams) => LexwareResult<ResourceResponse>` | Update an existing voucher (full replace). |
+| `list` | `(filter?: VoucherListFilter) => LexwareResult<Page<Voucher>>` | List vouchers with optional filters. |
+| `listAll` | `(filter?) => AsyncGenerator<Voucher>` | Auto-paginating iterator over all vouchers. |
+| `uploadFile` | `(id: string, formData: FormData) => LexwareResult<{ id: string }>` | Upload a receipt/attachment to a voucher. |
+
+<details>
+<summary>VoucherCreateParams</summary>
+
+```typescript
+{
+  type: 'salesinvoice' | 'salescreditnote' | 'purchaseinvoice' | 'purchasecreditnote' | 'invoice' | 'creditnote' | 'orderconfirmation' | 'quotation';
+  voucherNumber: string;
+  voucherDate: string;
+  totalGrossAmount: number;
+  totalTaxAmount: number;
+  taxType: TaxType;
+  voucherItems: { amount: number; taxAmount: number; taxRatePercent: number; categoryId: string }[];
+  version: number;
+  shippingDate?: string;
+  dueDate?: string;
+  useCollectiveContact?: boolean;
+  remark?: string;
+}
+```
+</details>
+
+<details>
+<summary>VoucherListFilter</summary>
+
+```typescript
+{ voucherNumber?: string; page?: number; size?: number }
+```
+</details>
+
+---
+
+### `client.voucherlist` — Cross-Type Voucher Search
+
+Search across all voucher types (invoices, credit notes, quotations, etc.) with powerful filters. Ideal for building dashboards and reports.
+
+| Method | Signature | Description |
+|---|---|---|
+| `list` | `(filter: VoucherlistFilter) => LexwareResult<Page<VoucherlistItem>>` | Search vouchers with filters. `voucherType` is required. |
+| `listAll` | `(filter) => AsyncGenerator<VoucherlistItem>` | Auto-paginating iterator over all matching vouchers. |
+
+<details>
+<summary>VoucherlistFilter</summary>
+
+```typescript
+{
+  voucherType: 'salesinvoice' | 'salescreditnote' | 'purchaseinvoice' | 'purchasecreditnote' | 'invoice' | 'creditnote' | 'downpaymentinvoice' | 'orderconfirmation' | 'quotation';  // required
+  voucherStatus?: 'draft' | 'open' | 'paid' | 'paidoff' | 'voided' | 'overdue' | 'accepted' | 'rejected';
+  archived?: boolean;
+  contactId?: string;
+  voucherDateFrom?: string;        // ISO date
+  voucherDateTo?: string;
+  createdDateFrom?: string;
+  createdDateTo?: string;
+  updatedDateFrom?: string;
+  updatedDateTo?: string;
+  page?: number;
+  size?: number;
+}
+```
+</details>
+
+<details>
+<summary>VoucherlistItem (response)</summary>
+
+```typescript
+{
+  id: string;
+  voucherType: string;
+  voucherStatus: string;
+  voucherNumber: string;
+  voucherDate: string;
+  createdDate: string;
+  updatedDate: string;
+  dueDate?: string;
+  contactId?: string;
+  contactName: string;
+  totalAmount: number;
+  openAmount?: number;
+  currency: string;
+  archived: boolean;
+}
+```
+</details>
+
+---
+
+### `client.recurringTemplates` — Recurring Invoice Templates
+
+Retrieve recurring invoice templates. Templates are created and managed through the Lexware UI.
+
+| Method | Signature | Description |
+|---|---|---|
+| `get` | `(id: string) => LexwareResult<RecurringTemplate>` | Retrieve a single recurring template by ID. |
+| `list` | `(params?: PaginationParams) => LexwareResult<Page<RecurringTemplate>>` | List recurring templates. |
+| `listAll` | `(params?) => AsyncGenerator<RecurringTemplate>` | Auto-paginating iterator over all templates. |
+
+<details>
+<summary>RecurringTemplate (response)</summary>
+
+```typescript
+{
+  id: string;
+  organizationId: string;
+  version: number;
+  templateName?: string;
+  address: Address;
+  lineItems: (LineItem | TextLineItem)[];
+  totalPrice: TotalPrice;
+  taxConditions: TaxConditions;
+  paymentConditions?: PaymentConditions;
+  shippingConditions?: ShippingConditions;
+  title?: string;
+  introduction?: string;
+  remark?: string;
+  nextExecutionDate?: string;
+  lastExecutionDate?: string;
+  executionInterval?: string;
+  executionStatus?: string;
+  // ... timestamps, language, archived
+}
+```
+</details>
+
+---
+
+### `client.payments` — Payment Status
+
+Retrieve payment information for invoices and credit notes — open amounts, payment status, and individual payment items.
+
+| Method | Signature | Description |
+|---|---|---|
+| `get` | `(id: string) => LexwareResult<Payment>` | Get payment status for a voucher by its ID. |
+
+<details>
+<summary>Payment (response)</summary>
+
+```typescript
+{
+  openAmount: number;
+  currency: 'EUR';
+  paymentStatus: string;       // e.g. 'openRevenue', 'balanced'
+  voucherId: string;
+  voucherType: string;
+  voucherStatus: VoucherStatus;
+  paidDate?: string;
+  paymentItems?: {
+    paymentType: string;
+    voucherType: string;
+    currency: 'EUR';
+    amount: number;
+    date: string;
+  }[];
+}
+```
+</details>
+
+---
+
+### `client.files` — File Management
+
+Upload and download files (receipts, documents, attachments).
+
+| Method | Signature | Description |
+|---|---|---|
+| `upload` | `(formData: FormData) => LexwareResult<{ id: string }>` | Upload a file. Returns the file ID. |
+| `download` | `(documentFileId: string) => LexwareResult<Blob>` | Download a file by its document file ID. |
+
+---
+
+### `client.eventSubscriptions` — Webhook Subscriptions
+
+Register webhook URLs to receive real-time notifications when resources change (created, updated, deleted, status changed).
+
+| Method | Signature | Description |
+|---|---|---|
+| `create` | `(subscription: EventSubscriptionCreateParams) => LexwareResult<ResourceResponse>` | Create a new webhook subscription. |
+| `get` | `(id: string) => LexwareResult<EventSubscription>` | Retrieve a subscription by ID. |
+| `list` | `() => LexwareResult<{ content: EventSubscription[] }>` | List all active subscriptions. |
+| `delete` | `(id: string) => LexwareResult<void>` | Delete a subscription. |
+
+<details>
+<summary>EventSubscriptionCreateParams</summary>
+
+```typescript
+{
+  eventType: EventType;   // e.g. 'invoice.created', 'contact.changed', 'payment.changed'
+  callbackUrl: string;    // Your webhook endpoint URL
+}
+```
+</details>
+
+<details>
+<summary>Supported Event Types</summary>
+
+`article.created` · `article.changed` · `article.deleted` · `contact.created` · `contact.changed` · `contact.deleted` · `credit-note.created` · `credit-note.changed` · `credit-note.deleted` · `credit-note.status.changed` · `delivery-note.created` · `delivery-note.changed` · `delivery-note.deleted` · `delivery-note.status.changed` · `down-payment-invoice.created` · `down-payment-invoice.changed` · `down-payment-invoice.deleted` · `down-payment-invoice.status.changed` · `dunning.created` · `dunning.changed` · `dunning.deleted` · `dunning.status.changed` · `invoice.created` · `invoice.changed` · `invoice.deleted` · `invoice.status.changed` · `order-confirmation.created` · `order-confirmation.changed` · `order-confirmation.deleted` · `order-confirmation.status.changed` · `payment.changed` · `quotation.created` · `quotation.changed` · `quotation.deleted` · `quotation.status.changed` · `recurring-template.created` · `recurring-template.changed` · `recurring-template.deleted` · `voucher.created` · `voucher.changed` · `voucher.deleted` · `voucher.status.changed`
+</details>
+
+---
+
+### `client.countries` — Country List
+
+Retrieve the list of countries supported by Lexware with their tax classifications.
+
+| Method | Signature | Description |
+|---|---|---|
+| `list` | `() => LexwareResult<Country[]>` | Get all supported countries. |
+
+<details>
+<summary>Country (response)</summary>
+
+```typescript
+{ countryCode: string; countryNameDE: string; countryNameEN: string; taxClassification: string }
+```
+</details>
+
+---
+
+### `client.paymentConditions` — Payment Terms
+
+Retrieve configured payment terms (e.g. "30 days net", "2% discount within 10 days").
+
+| Method | Signature | Description |
+|---|---|---|
+| `list` | `() => LexwareResult<PaymentCondition[]>` | Get all payment conditions. |
+
+<details>
+<summary>PaymentCondition (response)</summary>
+
+```typescript
+{
+  id: string;
+  organizationId: string;
+  paymentTermLabelTemplate: string;
+  paymentTermDuration: number;
+  paymentDiscountConditions?: { discountPercentage: number; discountRange: number };
+}
+```
+</details>
+
+---
+
+### `client.postingCategories` — Posting Categories
+
+Retrieve available posting categories for bookkeeping vouchers.
+
+| Method | Signature | Description |
+|---|---|---|
+| `list` | `() => LexwareResult<PostingCategory[]>` | Get all posting categories. |
+
+<details>
+<summary>PostingCategory (response)</summary>
+
+```typescript
+{ id: string; name: string; type: string; contactRequired: boolean; splitAllowed: boolean; groupName: string }
+```
+</details>
+
+---
+
+### `client.printLayouts` — Print Layouts
+
+Retrieve available print layouts for documents.
+
+| Method | Signature | Description |
+|---|---|---|
+| `list` | `() => LexwareResult<PrintLayout[]>` | Get all print layouts. |
+
+<details>
+<summary>PrintLayout (response)</summary>
+
+```typescript
+{ id: string; name: string; default: boolean }
+```
+</details>
+
+---
+
+### `client.profile` — Organization Profile
+
+Retrieve information about the connected Lexware organization.
+
+| Method | Signature | Description |
+|---|---|---|
+| `get` | `() => LexwareResult<Profile>` | Get the organization profile. |
+
+<details>
+<summary>Profile (response)</summary>
+
+```typescript
+{
+  organizationId: string;
+  companyName: string;
+  created?: { userId: string; userName: string; userEmail: string; date: string };
+  connectionId?: string;
+  taxType?: string;
+  smallBusiness?: boolean;
+}
+```
+</details>
+
+---
+
+### `client.composites` — Smart Composite Endpoints
+
+High-level workflows that combine multiple API calls into one. See [Smart Composite Endpoints](#smart-composite-endpoints) above for full usage examples.
+
+| Method | Signature | Description |
+|---|---|---|
+| `createAndFinalizeInvoice` | `(params: InvoiceCreateParams) => LexwareResult<CreateAndFinalizeResult>` | Create, finalize, and render an invoice PDF in one call. |
+| `getInvoiceWithContact` | `(invoiceId: string) => LexwareResult<InvoiceWithContact>` | Fetch an invoice with its linked contact. |
+| `getContactWithInvoices` | `(contactId: string, filter?) => LexwareResult<ContactWithInvoices>` | Fetch a contact with all their invoices. |
+| `getOutstandingInvoices` | `() => LexwareResult<OutstandingInvoice[]>` | Get all open/overdue invoices with payment info. |
+| `createInvoiceFromArticles` | `(params: CreateInvoiceFromArticlesParams) => LexwareResult<ResourceResponse>` | Build an invoice from article IDs automatically. |
+| `getRevenueByContact` | `(contactId: string, filter?) => LexwareResult<ContactRevenue>` | Aggregate revenue from paid invoices per contact. |
+
+### Shared Types
+
+These types are used across multiple resources:
+
+```typescript
+// Address — used in invoices, contacts, quotations, etc.
+type Address = {
+  contactId?: string;      // Link to an existing contact
+  name?: string;
+  supplement?: string;
+  street?: string;
+  city?: string;
+  zip?: string;
+  countryCode?: string;    // ISO 3166-1 alpha-2 (e.g. 'DE')
+  contactPerson?: string;
+};
+
+// Line items — used in all document types
+type LineItem = {
+  type: 'custom' | 'material' | 'service';
+  name: string;
+  description?: string;
+  quantity: number;
+  unitName: string;
+  unitPrice: { currency: 'EUR'; netAmount: number; grossAmount?: number; taxRatePercentage: number };
+  discountPercentage?: number;
+};
+
+type TextLineItem = {
+  type: 'text';
+  name: string;
+  description?: string;
+};
+
+// Voucher statuses
+type VoucherStatus = 'draft' | 'open' | 'paid' | 'paidoff' | 'voided' | 'overdue'
+  | 'accepted' | 'rejected' | 'unchecked' | 'sepadebit' | 'closed';
+
+// Tax types
+type TaxType = 'net' | 'gross' | 'vatfree' | 'intraCommunitySupply'
+  | 'constructionService13b' | 'externalService13b' | 'thirdPartyCountryService'
+  | 'thirdPartyCountryDelivery' | 'photovoltaicEquipment';
+
+// Pagination response
+type Page<T> = {
+  content: T[];
+  first: boolean;
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  numberOfElements: number;
+  size: number;
+  number: number;
+};
+```
 
 ## Configuration
 
