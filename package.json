@@ -1,6 +1,6 @@
 {
   "name": "@yannickaaron/lexware-client-ts",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Modern, type-safe TypeScript client for the Lexware API",
   "type": "module",
   "exports": {
