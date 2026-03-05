@@ -1,5 +1,5 @@
-import type { LexwareResult } from '../types/result.js';
 import type { HttpClient } from '../http.js';
+import type { LexwareResult } from '../types/result.js';
 
 /** A print layout template available for rendering voucher documents. */
 export type PrintLayout = {

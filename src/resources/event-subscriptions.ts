@@ -1,6 +1,6 @@
+import type { HttpClient } from '../http.js';
 import type { ResourceResponse } from '../types/common.js';
 import type { LexwareResult } from '../types/result.js';
-import type { HttpClient } from '../http.js';
 
 /** Supported webhook event types for resource lifecycle notifications. */
 export type EventType =

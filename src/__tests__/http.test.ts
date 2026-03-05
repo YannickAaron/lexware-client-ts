@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { HttpClient } from '../http.js';
 import { createMockFetch } from './helpers/mock-fetch.js';
 
@@ -47,7 +47,8 @@ describe('HttpClient', () => {
 
       await http.get('/invoices', { params: { page: 0, size: 25 } });
 
-      const url = new URL(mock.calls[0]!.url);
+      const call = mock.calls[0];
+      const url = new URL(call?.url ?? '');
       expect(url.searchParams.get('page')).toBe('0');
       expect(url.searchParams.get('size')).toBe('25');
     });
@@ -57,7 +58,8 @@ describe('HttpClient', () => {
 
       await http.get('/invoices', { params: { page: 0, filter: undefined, name: null } });
 
-      const url = new URL(mock.calls[0]!.url);
+      const call = mock.calls[0];
+      const url = new URL(call?.url ?? '');
       expect(url.searchParams.get('page')).toBe('0');
       expect(url.searchParams.has('filter')).toBe(false);
       expect(url.searchParams.has('name')).toBe(false);

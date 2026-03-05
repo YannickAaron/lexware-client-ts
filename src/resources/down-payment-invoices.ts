@@ -1,18 +1,18 @@
+import type { HttpClient } from '../http.js';
 import type {
   Address,
   LineItem,
-  TextLineItem,
-  TotalPrice,
-  TaxAmount,
-  TaxConditions,
   PaymentConditions,
   ShippingConditions,
+  TaxAmount,
+  TaxConditions,
+  TextLineItem,
+  TotalPrice,
   VoucherFile,
   VoucherStatus,
 } from '../types/common.js';
 import type { Page, PaginationParams } from '../types/pagination.js';
 import type { LexwareResult } from '../types/result.js';
-import type { HttpClient } from '../http.js';
 
 /** A Lexware down payment invoice with all details including line items, pricing, and status. */
 export type DownPaymentInvoice = {

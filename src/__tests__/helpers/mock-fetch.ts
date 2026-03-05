@@ -10,11 +10,15 @@ export function createMockFetch(responses: MockResponse | MockResponse[]) {
 
   const calls: Array<{ url: string; init?: RequestInit }> = [];
 
-  const mockFetch = async (input: string | URL | Request, init?: RequestInit): Promise<Response> => {
-    const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+  const mockFetch = async (
+    input: string | URL | Request,
+    init?: RequestInit,
+  ): Promise<Response> => {
+    const url =
+      typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
     calls.push({ url, init });
 
-    const resp = queue[Math.min(callIndex++, queue.length - 1)]!;
+    const resp = queue[Math.min(callIndex++, queue.length - 1)] as MockResponse;
 
     const body = resp.body !== undefined ? JSON.stringify(resp.body) : null;
 

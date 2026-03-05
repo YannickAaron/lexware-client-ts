@@ -1,15 +1,15 @@
+import type { HttpClient } from '../http.js';
 import type {
   Address,
   LineItem,
-  TextLineItem,
-  TotalPrice,
-  TaxConditions,
   PaymentConditions,
   ShippingConditions,
+  TaxConditions,
+  TextLineItem,
+  TotalPrice,
 } from '../types/common.js';
 import type { Page, PaginationParams } from '../types/pagination.js';
 import type { LexwareResult } from '../types/result.js';
-import type { HttpClient } from '../http.js';
 
 /** A recurring invoice template with schedule and content details. */
 export type RecurringTemplate = {

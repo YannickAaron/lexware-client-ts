@@ -11,130 +11,130 @@ export {
 } from './types/result.js';
 
 // Error types
-export { type LexwareError, type ErrorCode, type ErrorDetail } from './errors.js';
+export type { LexwareError, ErrorCode, ErrorDetail } from './errors.js';
 
 // Pagination
-export { type Page, type PaginationParams, type SortInfo } from './types/pagination.js';
+export type { Page, PaginationParams, SortInfo } from './types/pagination.js';
 
 // Common types
-export {
-  type TaxType,
-  type VoucherStatus,
-  type Currency,
-  type Address,
-  type LineItem,
-  type TextLineItem,
-  type UnitPrice,
-  type TotalPrice,
-  type TaxAmount,
-  type TaxConditions,
-  type PaymentConditions,
-  type ShippingConditions,
-  type ShippingType,
-  type ResourceResponse,
-  type XRechnungInfo,
-  type DocumentFileId,
-  type DownPaymentDeduction,
-  type VoucherFile,
+export type {
+  TaxType,
+  VoucherStatus,
+  Currency,
+  Address,
+  LineItem,
+  TextLineItem,
+  UnitPrice,
+  TotalPrice,
+  TaxAmount,
+  TaxConditions,
+  PaymentConditions,
+  ShippingConditions,
+  ShippingType,
+  ResourceResponse,
+  XRechnungInfo,
+  DocumentFileId,
+  DownPaymentDeduction,
+  VoucherFile,
 } from './types/common.js';
 
 // Resource types
-export {
-  type Article,
-  type ArticleCreateParams,
-  type ArticleType,
-  type ArticlePrice,
-  type ArticleListFilter,
+export type {
+  Article,
+  ArticleCreateParams,
+  ArticleType,
+  ArticlePrice,
+  ArticleListFilter,
 } from './resources/articles.js';
 
-export {
-  type Contact,
-  type ContactCreateParams,
-  type ContactListFilter,
-  type ContactRole,
-  type ContactPerson,
-  type ContactCompany,
-  type ContactAddress,
-  type ContactEmailAddress,
-  type ContactPhoneNumber,
+export type {
+  Contact,
+  ContactCreateParams,
+  ContactListFilter,
+  ContactRole,
+  ContactPerson,
+  ContactCompany,
+  ContactAddress,
+  ContactEmailAddress,
+  ContactPhoneNumber,
 } from './resources/contacts.js';
 
-export {
-  type Invoice,
-  type InvoiceCreateParams,
-  type InvoiceListFilter,
+export type {
+  Invoice,
+  InvoiceCreateParams,
+  InvoiceListFilter,
 } from './resources/invoices.js';
 
-export {
-  type CreditNote,
-  type CreditNoteCreateParams,
-  type CreditNoteListFilter,
+export type {
+  CreditNote,
+  CreditNoteCreateParams,
+  CreditNoteListFilter,
 } from './resources/credit-notes.js';
 
-export {
-  type DeliveryNote,
-  type DeliveryNoteCreateParams,
-  type DeliveryNoteListFilter,
+export type {
+  DeliveryNote,
+  DeliveryNoteCreateParams,
+  DeliveryNoteListFilter,
 } from './resources/delivery-notes.js';
 
-export {
-  type Quotation,
-  type QuotationCreateParams,
-  type QuotationListFilter,
+export type {
+  Quotation,
+  QuotationCreateParams,
+  QuotationListFilter,
 } from './resources/quotations.js';
 
-export {
-  type OrderConfirmation,
-  type OrderConfirmationCreateParams,
-  type OrderConfirmationListFilter,
+export type {
+  OrderConfirmation,
+  OrderConfirmationCreateParams,
+  OrderConfirmationListFilter,
 } from './resources/order-confirmations.js';
 
-export {
-  type Dunning,
-  type DunningCreateParams,
-  type DunningListFilter,
+export type {
+  Dunning,
+  DunningCreateParams,
+  DunningListFilter,
 } from './resources/dunnings.js';
 
-export {
-  type DownPaymentInvoice,
-  type DownPaymentInvoiceListFilter,
+export type {
+  DownPaymentInvoice,
+  DownPaymentInvoiceListFilter,
 } from './resources/down-payment-invoices.js';
 
-export {
-  type Voucher,
-  type VoucherCreateParams,
-  type VoucherListFilter,
-  type VoucherType,
-  type VoucherItem,
+export type {
+  Voucher,
+  VoucherCreateParams,
+  VoucherListFilter,
+  VoucherType,
+  VoucherItem,
 } from './resources/vouchers.js';
 
-export {
-  type VoucherlistItem,
-  type VoucherlistFilter,
-  type VoucherlistVoucherType,
-  type VoucherlistVoucherStatus,
+export type {
+  VoucherlistItem,
+  VoucherlistFilter,
+  VoucherlistVoucherType,
+  VoucherlistVoucherStatus,
 } from './resources/voucherlist.js';
 
-export { type RecurringTemplate } from './resources/recurring-templates.js';
+export type { RecurringTemplate } from './resources/recurring-templates.js';
 
-export { type Payment, type PaymentItem } from './resources/payments.js';
+export type { Payment, PaymentItem } from './resources/payments.js';
 
-export { type Country } from './resources/countries.js';
+export type { Country } from './resources/countries.js';
 
-export { type PaymentCondition } from './resources/payment-conditions.js';
+export type { PaymentCondition } from './resources/payment-conditions.js';
 
-export { type PostingCategory } from './resources/posting-categories.js';
+export type { PostingCategory } from './resources/posting-categories.js';
 
-export { type PrintLayout } from './resources/print-layouts.js';
+export type { PrintLayout } from './resources/print-layouts.js';
 
-export { type Profile } from './resources/profile.js';
+export type { Profile } from './resources/profile.js';
 
-export { type FileUploadResponse } from './resources/files.js';
+export type { FileUploadResponse } from './resources/files.js';
 
-export {
-  type EventSubscription,
-  type EventSubscriptionCreateParams,
-  type EventType,
+export type {
+  EventSubscription,
+  EventSubscriptionCreateParams,
+  EventType,
 } from './resources/event-subscriptions.js';
 
 // Type guards

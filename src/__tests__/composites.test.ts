@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { LexwareClient } from '../client.js';
 import { createMockFetch } from './helpers/mock-fetch.js';
 
@@ -229,7 +229,13 @@ describe('CompositesResource', () => {
             title: 'Web Design',
             type: 'SERVICE',
             unitName: 'hours',
-            price: { netPrice: 120, grossPrice: 142.8, taxRate: 19, currency: 'EUR', leadingPrice: 'net' },
+            price: {
+              netPrice: 120,
+              grossPrice: 142.8,
+              taxRate: 19,
+              currency: 'EUR',
+              leadingPrice: 'net',
+            },
           },
         },
         // GET /articles/art-2
@@ -240,7 +246,13 @@ describe('CompositesResource', () => {
             title: 'Hosting',
             type: 'PRODUCT',
             unitName: 'months',
-            price: { netPrice: 50, grossPrice: 59.5, taxRate: 19, currency: 'EUR', leadingPrice: 'net' },
+            price: {
+              netPrice: 50,
+              grossPrice: 59.5,
+              taxRate: 19,
+              currency: 'EUR',
+              leadingPrice: 'net',
+            },
           },
         },
         // POST /invoices

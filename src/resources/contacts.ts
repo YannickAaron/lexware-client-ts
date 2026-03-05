@@ -1,8 +1,8 @@
+import type { HttpClient } from '../http.js';
 import type { Address } from '../types/common.js';
+import type { ResourceResponse } from '../types/common.js';
 import type { Page, PaginationParams } from '../types/pagination.js';
 import type { LexwareResult } from '../types/result.js';
-import type { HttpClient } from '../http.js';
-import type { ResourceResponse } from '../types/common.js';
 
 /** A contact's role as customer or vendor with an optional number. */
 export type ContactRole = {

@@ -1,5 +1,5 @@
-import type { LexwareResult } from '../types/result.js';
 import type { HttpClient } from '../http.js';
+import type { LexwareResult } from '../types/result.js';
 
 /** The organization profile including company info and tax settings. */
 export type Profile = {

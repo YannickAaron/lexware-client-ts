@@ -1,5 +1,5 @@
 import type { LineItem, TextLineItem } from './common.js';
-import type { LexwareResult, LexwareSuccess, LexwareFailure } from './result.js';
+import type { LexwareFailure, LexwareResult, LexwareSuccess } from './result.js';
 
 /** Type guard that checks if a line item is a text-only line item. */
 export function isTextLineItem(item: LineItem | TextLineItem): item is TextLineItem {

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { LexwareClient } from '../client.js';
 import { createMockFetch } from './helpers/mock-fetch.js';
 

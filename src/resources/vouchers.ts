@@ -1,7 +1,7 @@
-import type { TaxType, ResourceResponse } from '../types/common.js';
+import type { HttpClient } from '../http.js';
+import type { ResourceResponse, TaxType } from '../types/common.js';
 import type { Page, PaginationParams } from '../types/pagination.js';
 import type { LexwareResult } from '../types/result.js';
-import type { HttpClient } from '../http.js';
 
 /** The classification of a voucher (e.g., sales invoice, purchase credit note). */
 export type VoucherType =
@@ -79,10 +79,7 @@ export class VouchersResource {
   }
 
   /** Update an existing voucher by ID. */
-  async update(
-    id: string,
-    voucher: VoucherCreateParams,
-  ): Promise<LexwareResult<ResourceResponse>> {
+  async update(id: string, voucher: VoucherCreateParams): Promise<LexwareResult<ResourceResponse>> {
     return this.http.put(`/vouchers/${encodeURIComponent(id)}`, voucher);
   }
 

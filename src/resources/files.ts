@@ -1,5 +1,5 @@
-import type { LexwareResult } from '../types/result.js';
 import type { HttpClient } from '../http.js';
+import type { LexwareResult } from '../types/result.js';
 
 /** Response returned after successfully uploading a file. */
 export type FileUploadResponse = {

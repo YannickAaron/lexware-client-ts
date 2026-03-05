@@ -1,11 +1,19 @@
-import type { LexwareResult } from './types/result.js';
-import type { ResourceResponse, Address, TaxConditions, ShippingConditions, PaymentConditions, XRechnungInfo, Currency } from './types/common.js';
-import type { Invoice } from './resources/invoices.js';
-import type { Contact } from './resources/contacts.js';
+import type { LexwareClient } from './client.js';
 import type { Article } from './resources/articles.js';
+import type { Contact } from './resources/contacts.js';
+import type { Invoice } from './resources/invoices.js';
 import type { Payment } from './resources/payments.js';
 import type { VoucherlistItem } from './resources/voucherlist.js';
-import type { LexwareClient } from './client.js';
+import type {
+  Address,
+  Currency,
+  PaymentConditions,
+  ResourceResponse,
+  ShippingConditions,
+  TaxConditions,
+  XRechnungInfo,
+} from './types/common.js';
+import type { LexwareResult } from './types/result.js';
 
 /** Result of creating and finalizing an invoice in one step. */
 export type CreateAndFinalizeResult = ResourceResponse & {

@@ -1,5 +1,5 @@
-import type { LexwareResult } from '../types/result.js';
 import type { HttpClient } from '../http.js';
+import type { LexwareResult } from '../types/result.js';
 
 /** A bookkeeping posting category used for classifying voucher line items. */
 export type PostingCategory = {

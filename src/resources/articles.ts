@@ -1,8 +1,8 @@
+import type { HttpClient } from '../http.js';
 import type { Currency } from '../types/common.js';
+import type { ResourceResponse } from '../types/common.js';
 import type { Page, PaginationParams } from '../types/pagination.js';
 import type { LexwareResult } from '../types/result.js';
-import type { HttpClient } from '../http.js';
-import type { ResourceResponse } from '../types/common.js';
 
 /** The type of article: either a physical product or a service. */
 export type ArticleType = 'PRODUCT' | 'SERVICE';

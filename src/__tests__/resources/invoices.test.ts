@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { LexwareClient } from '../../client.js';
 import { createMockFetch } from '../helpers/mock-fetch.js';
 
@@ -64,7 +64,8 @@ describe('InvoicesResource', () => {
         { finalize: true },
       );
 
-      const url = new URL(mock.calls[0]!.url);
+      const call = mock.calls[0];
+      const url = new URL(call?.url ?? '');
       expect(url.searchParams.get('finalize')).toBe('true');
     });
   });
@@ -129,7 +130,8 @@ describe('InvoicesResource', () => {
         expect(result.data.content).toHaveLength(2);
         expect(result.data.totalElements).toBe(2);
       }
-      const url = new URL(mock.calls[0]!.url);
+      const call = mock.calls[0];
+      const url = new URL(call?.url ?? '');
       expect(url.searchParams.get('voucherStatus')).toBe('open');
       expect(url.searchParams.get('page')).toBe('0');
     });

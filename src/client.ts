@@ -1,25 +1,25 @@
+import { CompositesResource } from './composites.js';
 import { HttpClient } from './http.js';
 import { ArticlesResource } from './resources/articles.js';
 import { ContactsResource } from './resources/contacts.js';
-import { InvoicesResource } from './resources/invoices.js';
+import { CountriesResource } from './resources/countries.js';
 import { CreditNotesResource } from './resources/credit-notes.js';
 import { DeliveryNotesResource } from './resources/delivery-notes.js';
-import { QuotationsResource } from './resources/quotations.js';
-import { OrderConfirmationsResource } from './resources/order-confirmations.js';
-import { DunningsResource } from './resources/dunnings.js';
 import { DownPaymentInvoicesResource } from './resources/down-payment-invoices.js';
-import { VouchersResource } from './resources/vouchers.js';
-import { VoucherlistResource } from './resources/voucherlist.js';
-import { RecurringTemplatesResource } from './resources/recurring-templates.js';
-import { PaymentsResource } from './resources/payments.js';
-import { CountriesResource } from './resources/countries.js';
+import { DunningsResource } from './resources/dunnings.js';
+import { EventSubscriptionsResource } from './resources/event-subscriptions.js';
+import { FilesResource } from './resources/files.js';
+import { InvoicesResource } from './resources/invoices.js';
+import { OrderConfirmationsResource } from './resources/order-confirmations.js';
 import { PaymentConditionsResource } from './resources/payment-conditions.js';
+import { PaymentsResource } from './resources/payments.js';
 import { PostingCategoriesResource } from './resources/posting-categories.js';
 import { PrintLayoutsResource } from './resources/print-layouts.js';
 import { ProfileResource } from './resources/profile.js';
-import { FilesResource } from './resources/files.js';
-import { EventSubscriptionsResource } from './resources/event-subscriptions.js';
-import { CompositesResource } from './composites.js';
+import { QuotationsResource } from './resources/quotations.js';
+import { RecurringTemplatesResource } from './resources/recurring-templates.js';
+import { VoucherlistResource } from './resources/voucherlist.js';
+import { VouchersResource } from './resources/vouchers.js';
 
 /** Configuration for the Lexware API client. */
 export type LexwareClientConfig = {
@@ -70,106 +70,127 @@ export class LexwareClient {
 
   /** Articles resource for managing products and services. */
   get articles(): ArticlesResource {
-    return (this._articles ??= new ArticlesResource(this.http));
+    this._articles ??= new ArticlesResource(this.http);
+    return this._articles;
   }
 
   /** Contacts resource for managing customers and vendors. */
   get contacts(): ContactsResource {
-    return (this._contacts ??= new ContactsResource(this.http));
+    this._contacts ??= new ContactsResource(this.http);
+    return this._contacts;
   }
 
   /** Invoices resource for creating, retrieving, and managing invoices. */
   get invoices(): InvoicesResource {
-    return (this._invoices ??= new InvoicesResource(this.http));
+    this._invoices ??= new InvoicesResource(this.http);
+    return this._invoices;
   }
 
   /** Credit notes resource for creating and managing credit notes. */
   get creditNotes(): CreditNotesResource {
-    return (this._creditNotes ??= new CreditNotesResource(this.http));
+    this._creditNotes ??= new CreditNotesResource(this.http);
+    return this._creditNotes;
   }
 
   /** Delivery notes resource for creating and managing delivery notes. */
   get deliveryNotes(): DeliveryNotesResource {
-    return (this._deliveryNotes ??= new DeliveryNotesResource(this.http));
+    this._deliveryNotes ??= new DeliveryNotesResource(this.http);
+    return this._deliveryNotes;
   }
 
   /** Quotations resource for creating and managing quotes. */
   get quotations(): QuotationsResource {
-    return (this._quotations ??= new QuotationsResource(this.http));
+    this._quotations ??= new QuotationsResource(this.http);
+    return this._quotations;
   }
 
   /** Order confirmations resource for creating and managing order confirmations. */
   get orderConfirmations(): OrderConfirmationsResource {
-    return (this._orderConfirmations ??= new OrderConfirmationsResource(this.http));
+    this._orderConfirmations ??= new OrderConfirmationsResource(this.http);
+    return this._orderConfirmations;
   }
 
   /** Dunnings resource for creating and managing payment reminders. */
   get dunnings(): DunningsResource {
-    return (this._dunnings ??= new DunningsResource(this.http));
+    this._dunnings ??= new DunningsResource(this.http);
+    return this._dunnings;
   }
 
   /** Down payment invoices resource for managing advance payment invoices. */
   get downPaymentInvoices(): DownPaymentInvoicesResource {
-    return (this._downPaymentInvoices ??= new DownPaymentInvoicesResource(this.http));
+    this._downPaymentInvoices ??= new DownPaymentInvoicesResource(this.http);
+    return this._downPaymentInvoices;
   }
 
   /** Vouchers resource for creating and managing vouchers. */
   get vouchers(): VouchersResource {
-    return (this._vouchers ??= new VouchersResource(this.http));
+    this._vouchers ??= new VouchersResource(this.http);
+    return this._vouchers;
   }
 
   /** Voucherlist resource for querying and filtering across all voucher types. */
   get voucherlist(): VoucherlistResource {
-    return (this._voucherlist ??= new VoucherlistResource(this.http));
+    this._voucherlist ??= new VoucherlistResource(this.http);
+    return this._voucherlist;
   }
 
   /** Recurring templates resource for managing recurring invoice templates. */
   get recurringTemplates(): RecurringTemplatesResource {
-    return (this._recurringTemplates ??= new RecurringTemplatesResource(this.http));
+    this._recurringTemplates ??= new RecurringTemplatesResource(this.http);
+    return this._recurringTemplates;
   }
 
   /** Payments resource for managing payment records. */
   get payments(): PaymentsResource {
-    return (this._payments ??= new PaymentsResource(this.http));
+    this._payments ??= new PaymentsResource(this.http);
+    return this._payments;
   }
 
   /** Countries resource for retrieving available countries. */
   get countries(): CountriesResource {
-    return (this._countries ??= new CountriesResource(this.http));
+    this._countries ??= new CountriesResource(this.http);
+    return this._countries;
   }
 
   /** Payment conditions resource for retrieving available payment terms. */
   get paymentConditions(): PaymentConditionsResource {
-    return (this._paymentConditions ??= new PaymentConditionsResource(this.http));
+    this._paymentConditions ??= new PaymentConditionsResource(this.http);
+    return this._paymentConditions;
   }
 
   /** Posting categories resource for retrieving available booking categories. */
   get postingCategories(): PostingCategoriesResource {
-    return (this._postingCategories ??= new PostingCategoriesResource(this.http));
+    this._postingCategories ??= new PostingCategoriesResource(this.http);
+    return this._postingCategories;
   }
 
   /** Print layouts resource for retrieving available document print layouts. */
   get printLayouts(): PrintLayoutsResource {
-    return (this._printLayouts ??= new PrintLayoutsResource(this.http));
+    this._printLayouts ??= new PrintLayoutsResource(this.http);
+    return this._printLayouts;
   }
 
   /** Profile resource for retrieving the authenticated user's organization profile. */
   get profile(): ProfileResource {
-    return (this._profile ??= new ProfileResource(this.http));
+    this._profile ??= new ProfileResource(this.http);
+    return this._profile;
   }
 
   /** Files resource for uploading and downloading file attachments. */
   get files(): FilesResource {
-    return (this._files ??= new FilesResource(this.http));
+    this._files ??= new FilesResource(this.http);
+    return this._files;
   }
 
   /** Event subscriptions resource for managing webhook subscriptions. */
   get eventSubscriptions(): EventSubscriptionsResource {
-    return (this._eventSubscriptions ??= new EventSubscriptionsResource(this.http));
+    this._eventSubscriptions ??= new EventSubscriptionsResource(this.http);
+    return this._eventSubscriptions;
   }
 
   /** Smart composite endpoints that combine multiple API calls. */
   get composites(): CompositesResource {
-    return (this._composites ??= new CompositesResource(this));
+    this._composites ??= new CompositesResource(this);
+    return this._composites;
   }
 }

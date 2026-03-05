@@ -1,7 +1,7 @@
+import type { HttpClient } from '../http.js';
 import type { PaginationParams } from '../types/pagination.js';
 import type { Page } from '../types/pagination.js';
 import type { LexwareResult } from '../types/result.js';
-import type { HttpClient } from '../http.js';
 
 /** Supported voucher types for voucherlist queries. */
 export type VoucherlistVoucherType =
@@ -68,12 +68,7 @@ export class VoucherlistResource {
   }
 
   /** Async iterator that paginates through all matching voucherlist items. */
-  async *listAll(
-    filter: Omit<VoucherlistFilter, 'page'>,
-  ): AsyncGenerator<VoucherlistItem> {
-    yield* this.http.paginate<VoucherlistItem>(
-      '/voucherlist',
-      filter as Record<string, unknown>,
-    );
+  async *listAll(filter: Omit<VoucherlistFilter, 'page'>): AsyncGenerator<VoucherlistItem> {
+    yield* this.http.paginate<VoucherlistItem>('/voucherlist', filter as Record<string, unknown>);
   }
 }

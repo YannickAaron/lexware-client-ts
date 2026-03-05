@@ -1,5 +1,5 @@
-import type { LexwareResult } from '../types/result.js';
 import type { HttpClient } from '../http.js';
+import type { LexwareResult } from '../types/result.js';
 
 /** A payment condition defining term duration and optional discount rules. */
 export type PaymentCondition = {

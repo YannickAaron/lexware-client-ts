@@ -1,7 +1,7 @@
-import { RateLimiter } from './rate-limiter.js';
 import { type LexwareError, mapStatusToErrorCode } from './errors.js';
-import { type LexwareResult, ok, fail } from './types/result.js';
+import { RateLimiter } from './rate-limiter.js';
 import type { Page } from './types/pagination.js';
+import { type LexwareResult, fail, ok } from './types/result.js';
 
 /** Configuration for the HTTP client used internally by the Lexware API client. */
 export type HttpClientConfig = {

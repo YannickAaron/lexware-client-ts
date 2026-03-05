@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { LexwareClient } from '../../client.js';
 import { createMockFetch } from '../helpers/mock-fetch.js';
 
@@ -116,7 +116,8 @@ describe('ArticlesResource', () => {
       if (result.success) {
         expect(result.data.content).toHaveLength(1);
       }
-      const url = new URL(mock.calls[0]!.url);
+      const call = mock.calls[0];
+      const url = new URL(call?.url ?? '');
       expect(url.searchParams.get('type')).toBe('PRODUCT');
     });
   });

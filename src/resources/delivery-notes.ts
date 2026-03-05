@@ -1,20 +1,20 @@
+import type { HttpClient } from '../http.js';
 import type {
   Address,
-  LineItem,
-  TextLineItem,
-  TotalPrice,
-  TaxAmount,
-  TaxConditions,
-  ShippingConditions,
-  ResourceResponse,
   Currency,
   DocumentFileId,
+  LineItem,
+  ResourceResponse,
+  ShippingConditions,
+  TaxAmount,
+  TaxConditions,
+  TextLineItem,
+  TotalPrice,
   VoucherFile,
   VoucherStatus,
 } from '../types/common.js';
 import type { Page, PaginationParams } from '../types/pagination.js';
 import type { LexwareResult } from '../types/result.js';
-import type { HttpClient } from '../http.js';
 
 /** A Lexware delivery note with all details including line items, pricing, and status. */
 export type DeliveryNote = {
@@ -96,9 +96,6 @@ export class DeliveryNotesResource {
 
   /** Async iterator that automatically paginates through all matching delivery notes. */
   async *listAll(filter?: Omit<DeliveryNoteListFilter, 'page'>): AsyncGenerator<DeliveryNote> {
-    yield* this.http.paginate<DeliveryNote>(
-      '/delivery-notes',
-      filter as Record<string, unknown>,
-    );
+    yield* this.http.paginate<DeliveryNote>('/delivery-notes', filter as Record<string, unknown>);
   }
 }

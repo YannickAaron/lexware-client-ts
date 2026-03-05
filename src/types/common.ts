@@ -104,12 +104,7 @@ export type PaymentConditions = {
 };
 
 /** Delivery or service fulfilment type for shipping conditions. */
-export type ShippingType =
-  | 'service'
-  | 'serviceperiod'
-  | 'delivery'
-  | 'deliveryperiod'
-  | 'none';
+export type ShippingType = 'service' | 'serviceperiod' | 'delivery' | 'deliveryperiod' | 'none';
 
 /** Shipping or service date range and type for a voucher. */
 export type ShippingConditions = {
