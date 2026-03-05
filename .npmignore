@@ -1,0 +1,8 @@
+src/
+examples/
+*.test.ts
+__tests__/
+tsup.config.ts
+vitest.config.ts
+biome.json
+.claude/
